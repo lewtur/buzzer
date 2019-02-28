@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import Sound from 'react-sound';
 import './App.css';
 import Buzzer from './Buzzer';
 import Overlay from './Overlay';
@@ -14,6 +15,12 @@ const Container = styled.div`
 class App extends Component {
 
 	intervalId = 0;
+	buzzerSounds = {
+		red: 'door.mp3',
+		blue: 'door.mp3',
+		green: 'door.mp3',
+		yellow: 'door.mp3'
+	}
 
 	constructor(props) {
 		super(props);
@@ -58,10 +65,11 @@ class App extends Component {
 		this.setState(prevState => ({
 			score: {
 				...prevState.score,
-				[prevState.teamCurrentlyAnswering]: prevState.score[prevState.teamCurrentlyAnswering] += 1,	
+				[prevState.teamCurrentlyAnswering]: prevState.score[prevState.teamCurrentlyAnswering] += 1,
 			},
 			displayOverlay: false,
-			countdown: 0
+			countdown: 0,
+			teamCurrentlyAnswering: '',
 		}));
 		this.resetInterval();
 	}
@@ -69,21 +77,29 @@ class App extends Component {
 	incorrectAnswerCallback = () => {
 		this.setState({
 			displayOverlay: false,
-			countdown: 0
+			countdown: 0,
+			teamCurrentlyAnswering: '',
 		});
 		this.resetInterval();
 	}
 
 	render() {
-		const { displayOverlay, countdown, score } = this.state;
+		const { displayOverlay, countdown, score, teamCurrentlyAnswering } = this.state;
 
 		return (
 			<Container>
-				<Overlay 
-					display={displayOverlay} 
-					countdown={countdown} 
+
+				{['red', 'blue', 'green', 'yellow'].map(team => {
+					if (team === teamCurrentlyAnswering) {
+						return <Sound url={this.buzzerSounds[team]} playStatus={Sound.status.PLAYING} />
+					}
+				})}
+
+				<Overlay
+					display={displayOverlay}
+					countdown={countdown}
 					correctAnswerCallback={this.correctAnswerCallback}
-					incorrectAnswerCallback={this.incorrectAnswerCallback}	
+					incorrectAnswerCallback={this.incorrectAnswerCallback}
 				/>
 				<Buzzer colour="red" isClickable={!displayOverlay} onClick={this.buzz} score={score["red"]} />
 				<Buzzer colour="blue" isClickable={!displayOverlay} onClick={this.buzz} score={score["blue"]} />
