@@ -14,6 +14,7 @@ const Score = styled.div`
     display: flex;
     justify-content: center;
     flex-direction: row;
+    font-size: 4rem;
 `;
 
 class Buzzer extends Component {
@@ -25,11 +26,11 @@ class Buzzer extends Component {
     }
 
     render() {
-        const { colour } = this.props;
+        const { colour, onClick, score, isClickable } = this.props;
 
         return (
-            <BuzzerStyles colour={colour}>
-                <Score>Score</Score>
+            <BuzzerStyles onClick={() => isClickable ? onClick(colour) : null} colour={colour}>
+                <Score>{score}</Score>
             </BuzzerStyles>
         );
     }
